@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Print Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 { color: #007bff; }
+        .upload-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        #preview {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="no-print">
+        <h2>दुकान प्रिंट सेवा (Sahayak Print)</h2>
+        <p>नीचे दिए गए बटन पर क्लिक करके अपनी गैलरी से <b>फोटो या डॉक्यूमेंट</b> चुनें:</p>
+        
+        <!-- यह इनपुट सीधे फोन की गैलरी और फाइल्स को खोलेगा -->
+        <input type="file" id="file-input" accept="image/*,application/pdf" style="display: none;" onchange="handleFile(this)">
+        <label for="file-input" class="upload-btn">📁 गैलरी से फाइल चुनें</label>
+    </div>
+
+    <!-- प्रिंट होने वाला एरिया -->
+    <div id="print-area">
+        <img id="preview" src="" alt="" style="display: none;" />
+        <div id="pdf-message" style="display: none; font-size: 18px; margin-top: 20px; color: #333;">
+            PDF फाइल तैयार है। प्रिंट डायलॉग खुल रहा है...
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const preview = document.getElementById('preview');
+        const pdfMessage = document.getElementById('pdf-message');
+
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                pdfMessage.style.display = 'none';
+                
+                // फोटो लोड होने के तुरंत बाद प्रिंट कमांड ट्रिगर करें
+                setTimeout(() => { window.print(); }, 500);
+            }
+            reader.readAsDataURL(file);
+        } else if (file.type === 'application/pdf') {
+            preview.style.display = 'none';
+            pdfMessage.style.display = 'block';
+            
+            // PDF के लिए प्रिंट कमांड
+            setTimeout(() => { window.print(); }, 500);
+        }
+    }
+</script>
+
+</body>
+</html>
